@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoSim GIS Prototype</title>
+
+  <!-- MapLibre GL JS: Mapbox-compatible, free, no access token -->
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+  <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
+
+  <!-- OSM to GeoJSON Converter -->
+  <!-- Three.js for the 3D factory floor -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <script src="https://unpkg.com/osmtogeojson@3.0.0-beta.5/osmtogeojson.js"></script>
+
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <header class="topbar">
+    <strong>EcoSim</strong>
+    <span>Cash: <b id="cash">$0</b></span>
+  </header>
+
+  <div class="layout-container">
+    <!-- Macro-World: real streets and buildings -->
+    <div class="panel">
+      <h2>Macro-World: City Districts</h2>
+      <div id="map"></div>
+      <div class="controls">
+        <button id="loadDataBtn">Reload buildings</button>
+        <p id="mapStatus">Loading real-world buildings...</p>
+      </div>
+      <div class="controls traffic">
+        <label><input type="checkbox" id="trafficOn" checked> Traffic</label>
+        <label>Hour <input type="range" id="hour" min="0" max="23" value="12"> <span id="hourLbl"></span></label>
+        <button id="hourNow">Now</button>
+      </div>
+      <p id="trafficInfo" class="hint"></p>
+      <p class="hint">
+        If real data won't load (the free Overpass servers block direct requests from local files):
+        <a id="dataLink" target="_blank" rel="noopener">run the query in Overpass Turbo</a>,
+        click Export, then "download as GeoJSON", and pick that file here:
+        <input type="file" id="osmFile">
+      </p>
+      <details class="hint">
+        <summary>Link not working? Paste this query into overpass-turbo.eu yourself</summary>
+        <textarea id="queryBox" readonly rows="4"></textarea>
+      </details>
+    </div>
+
+    <!-- Micro-World: interior built from the real footprint -->
+    <div class="panel">
+      <h2>Interior Blueprint</h2>
+      <div id="info" class="card">Select a building on the map.</div>
+      <div id="palette" class="palette">
+        <button data-tool="E" class="active">Extractor $200</button>
+        <button data-tool="S">Smelter $500</button>
+        <button data-tool="C">Crate $100</button>
+        <button data-tool="X">Remove</button>
+        <button data-tool="W">Worker route</button>
+        <button data-tool="B">Belt ($50/tile)</button>
+        <button id="hireBtn">Hire worker $300</button>
+        <select id="workerSel" title="Which worker gets new routes"></select>
+      </div>
+      <canvas id="factoryFloor"></canvas>
+      <div class="controls">
+        <p id="canvasStatus">Awaiting building selection...</p>
+        <button id="buyBtn" disabled>Buy</button>
+        <button id="sellPropBtn" disabled>Sell</button>
+      </div>
+      <div class="controls">
+        <p id="stock">Stock: -</p>
+        <button id="sellBtn" disabled>Sell stock (test buyer)</button>
+      </div>
+      <div id="logistics" class="card"></div>
+    </div>
+  </div>
+
+  <script src="./main.js"></script>
+</body>
+</html>
